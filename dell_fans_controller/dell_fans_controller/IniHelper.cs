@@ -1,14 +1,11 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
 namespace dell_fans_controller
 {
     public class IniHelper
     {
-	    public IniHelper()
-	    {
-	    }
+        public IniHelper() { }
 
         /// <summary>
         /// 为INI文件中指定的节点取得字符串

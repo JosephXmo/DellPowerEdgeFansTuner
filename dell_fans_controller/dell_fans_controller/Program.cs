@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace dell_fans_controller
 {
     static class Program
     {
+        public static string version = "1.0.1";
+
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>

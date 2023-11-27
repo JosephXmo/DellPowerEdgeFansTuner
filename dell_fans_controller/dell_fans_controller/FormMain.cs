@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -8,15 +7,13 @@ namespace dell_fans_controller
 {
     public partial class frmMain : Form
     {
-        private static string version = "v1.0.2";
-
         private static string currentPath = Application.StartupPath; // System.Environment.CurrentDirectory;
         private static string configFileName = "\\config.ini";
         private static string explorer = "explorer";
-        private static string ipmitoolPath = currentPath + "\\ipmitool.exe";
+        private static string ipmitoolPath = currentPath + "\\Dell\\SysMgt\\bmc\\ipmitool.exe";
         private static string configFilePath = currentPath + configFileName;
 
-        private static string defaultIp = "192.168.1.100";
+        private static string defaultIp = "127.0.0.1";
         private static string defaultUser = "root";
         private static string defaultPassword = "calvin";
         private static string defaultConfigSection = "ipmi";
@@ -29,16 +26,16 @@ namespace dell_fans_controller
             {
                 process = new Process();
                 process.StartInfo.FileName = "cmd.exe";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.RedirectStandardInput = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
 
                 process.Start();
 
                 process.StandardInput.WriteLine(parameter + "& exit");
-                process.StandardInput.AutoFlush = true;
+                process.StandardInput.AutoFlush = true;
                 result = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
                 process.Close();
@@ -46,7 +43,7 @@ namespace dell_fans_controller
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ExceptionOccurred:{ 0},{ 1}", ex.Message, ex.StackTrace.ToString());
+                Console.WriteLine("ExceptionOccurred:{ 0},{ 1}", ex.Message, ex.StackTrace.ToString());
                 return null;
             }
         }
@@ -66,6 +63,7 @@ namespace dell_fans_controller
         {
             InitializeComponent();
 
+
             if (File.Exists(configFilePath))
             {
                 string ip = IniHelper.Read(defaultConfigSection, "ip", defaultIp, configFilePath);
@@ -84,54 +82,12 @@ namespace dell_fans_controller
                 txtUser.Text = defaultUser;
                 txtPassword.Text = defaultPassword;
             }
-            this.progressBar.Visible = false;
+            
         }
 
         private void nbrUpDownSpeed_ValueChanged(object sender, EventArgs e)
         {
             trkBarSpeed.Value = (int)nbrUpDownSpeed.Value;
-            trkBarSpeed1.Value = (int)nbrUpDownSpeed.Value;
-            trkBarSpeed2.Value = (int)nbrUpDownSpeed.Value;
-            trkBarSpeed3.Value = (int)nbrUpDownSpeed.Value;
-            trkBarSpeed4.Value = (int)nbrUpDownSpeed.Value;
-            trkBarSpeed5.Value = (int)nbrUpDownSpeed.Value;
-            trkBarSpeed6.Value = (int)nbrUpDownSpeed.Value;
-            nbrUpDownSpeed1.Value = (int)nbrUpDownSpeed.Value;
-            nbrUpDownSpeed2.Value = (int)nbrUpDownSpeed.Value;
-            nbrUpDownSpeed3.Value = (int)nbrUpDownSpeed.Value;
-            nbrUpDownSpeed4.Value = (int)nbrUpDownSpeed.Value;
-            nbrUpDownSpeed5.Value = (int)nbrUpDownSpeed.Value;
-            nbrUpDownSpeed6.Value = (int)nbrUpDownSpeed.Value;
-        }
-
-        private void nbrUpDownSpeed1_ValueChanged(object sender, EventArgs e)
-        {
-            trkBarSpeed1.Value = (int)nbrUpDownSpeed1.Value;
-        }
-
-        private void nbrUpDownSpeed2_ValueChanged(object sender, EventArgs e)
-        {
-            trkBarSpeed2.Value = (int)nbrUpDownSpeed2.Value;
-        }
-
-        private void nbrUpDownSpeed3_ValueChanged(object sender, EventArgs e)
-        {
-            trkBarSpeed3.Value = (int)nbrUpDownSpeed3.Value;
-        }
-
-        private void nbrUpDownSpeed4_ValueChanged(object sender, EventArgs e)
-        {
-            trkBarSpeed4.Value = (int)nbrUpDownSpeed4.Value;
-        }
-
-        private void nbrUpDownSpeed5_ValueChanged(object sender, EventArgs e)
-        {
-            trkBarSpeed5.Value = (int)nbrUpDownSpeed5.Value;
-        }
-
-        private void nbrUpDownSpeed6_ValueChanged(object sender, EventArgs e)
-        {
-            trkBarSpeed6.Value = (int)nbrUpDownSpeed6.Value;
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -143,7 +99,6 @@ namespace dell_fans_controller
             string parametersReset = string.Format("-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x01", ip, user, password);
 
             string fullExecuteReset = ipmitoolPath + " " + parametersReset;
-
             execute(fullExecuteReset);
         }
 
@@ -155,29 +110,15 @@ namespace dell_fans_controller
             string percent = nbrUpDownSpeed.Text;
             int percentNum = int.Parse(percent);
 
-            trkBarSpeed1.Value = percentNum;
-            trkBarSpeed2.Value = percentNum;
-            trkBarSpeed3.Value = percentNum;
-            trkBarSpeed4.Value = percentNum;
-            trkBarSpeed5.Value = percentNum;
-            trkBarSpeed6.Value = percentNum;
-            nbrUpDownSpeed1.Value = percentNum;
-            nbrUpDownSpeed2.Value = percentNum;
-            nbrUpDownSpeed3.Value = percentNum;
-            nbrUpDownSpeed4.Value = percentNum;
-            nbrUpDownSpeed5.Value = percentNum;
-            nbrUpDownSpeed6.Value = percentNum;
-
-            // string format = "%s/Dell/SysMgt/bmc/ipmitool.exe -I lanplus -H %s -U %s -P %s raw
-            // 0x30 0x30 0x01";
+            // string format = "%s/Dell/SysMgt/bmc/ipmitool.exe -I lanplus -H %s -U %s -P %s raw 0x30 0x30 0x01";
             string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
             string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
 
             string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
             string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
 
-            // format = "%s/Dell/SysMgt/bmc/ipmitool.exe -I lanplus -H %s -U %s -P %s raw 0x30 0x30
-            // 0x02 0xff 0x%02x";
+
+            // format = "%s/Dell/SysMgt/bmc/ipmitool.exe -I lanplus -H %s -U %s -P %s raw 0x30 0x30 0x02 0xff 0x%02x";
             string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0xff 0x{3:x2}";
             string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
 
@@ -187,136 +128,9 @@ namespace dell_fans_controller
             // MessageBox.Show(resultDisableAutoMode + "-" + resultSetSpeed);
 
             //string cmdFormat = "/k \"{0} {1}\" & \"{2} {3}\"";
-            //string cmdParameters = string.Format(cmdFormat, ipmitoolPath, parametersDisableAutoMode,
-            //ipmitoolPath, parametersSetSpeed);
+            //string cmdParameters = string.Format(cmdFormat, ipmitoolPath, parametersDisableAutoMode, ipmitoolPath, parametersSetSpeed);
 
             //Process.Start("cmd", cmdParameters);
-        }
-
-        private void btnSet1_Click(object sender, EventArgs e)
-        {
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-            string percent = nbrUpDownSpeed1.Text;
-            int percentNum = int.Parse(percent);
-
-            string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
-            string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
-
-            string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
-            string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
-
-            string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0x00 0x{3:x2}";
-            string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
-
-            string fullExecuteSetSpeed = ipmitoolPath + " " + parametersSetSpeed;
-            string resultSetSpeed = execute(fullExecuteSetSpeed);
-        }
-
-        private void btnSet2_Click(object sender, EventArgs e)
-        {
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-            string percent = nbrUpDownSpeed2.Text;
-            int percentNum = int.Parse(percent);
-
-            string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
-            string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
-
-            string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
-            string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
-
-            string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0x01 0x{3:x2}";
-            string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
-
-            string fullExecuteSetSpeed = ipmitoolPath + " " + parametersSetSpeed;
-            string resultSetSpeed = execute(fullExecuteSetSpeed);
-        }
-
-        private void btnSet3_Click(object sender, EventArgs e)
-        {
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-            string percent = nbrUpDownSpeed3.Text;
-            int percentNum = int.Parse(percent);
-
-            string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
-            string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
-
-            string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
-            string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
-
-            string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0x02 0x{3:x2}";
-            string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
-
-            string fullExecuteSetSpeed = ipmitoolPath + " " + parametersSetSpeed;
-            string resultSetSpeed = execute(fullExecuteSetSpeed);
-        }
-
-        private void btnSet4_Click(object sender, EventArgs e)
-        {
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-            string percent = nbrUpDownSpeed4.Text;
-            int percentNum = int.Parse(percent);
-
-            string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
-            string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
-
-            string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
-            string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
-
-            string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0x03 0x{3:x2}";
-            string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
-
-            string fullExecuteSetSpeed = ipmitoolPath + " " + parametersSetSpeed;
-            string resultSetSpeed = execute(fullExecuteSetSpeed);
-        }
-
-        private void btnSet5_Click(object sender, EventArgs e)
-        {
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-            string percent = nbrUpDownSpeed5.Text;
-            int percentNum = int.Parse(percent);
-
-            string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
-            string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
-
-            string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
-            string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
-
-            string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0x04 0x{3:x2}";
-            string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
-
-            string fullExecuteSetSpeed = ipmitoolPath + " " + parametersSetSpeed;
-            string resultSetSpeed = execute(fullExecuteSetSpeed);
-        }
-
-        private void btnSet6_Click(object sender, EventArgs e)
-        {
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-            string percent = nbrUpDownSpeed6.Text;
-            int percentNum = int.Parse(percent);
-
-            string formatDisableAutoMode = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x01 0x00";
-            string parametersDisableAutoMode = string.Format(formatDisableAutoMode, ip, user, password);
-
-            string fullExecuteDisableAutoMode = ipmitoolPath + " " + parametersDisableAutoMode;
-            string resultDisableAutoMode = execute(fullExecuteDisableAutoMode);
-
-            string formatSetSpeed = "-I lanplus -H {0} -U {1} -P {2} raw 0x30 0x30 0x02 0x05 0x{3:x2}";
-            string parametersSetSpeed = string.Format(formatSetSpeed, ip, user, password, percentNum);
-
-            string fullExecuteSetSpeed = ipmitoolPath + " " + parametersSetSpeed;
-            string resultSetSpeed = execute(fullExecuteSetSpeed);
         }
 
         private void btnVisitDellService_Click(object sender, EventArgs e)
@@ -327,53 +141,29 @@ namespace dell_fans_controller
         private void trkBarSpeed_Scroll(object sender, EventArgs e)
         {
             nbrUpDownSpeed.Value = trkBarSpeed.Value;
-            trkBarSpeed1.Value = trkBarSpeed.Value;
-            trkBarSpeed2.Value = trkBarSpeed.Value;
-            trkBarSpeed3.Value = trkBarSpeed.Value;
-            trkBarSpeed4.Value = trkBarSpeed.Value;
-            trkBarSpeed5.Value = trkBarSpeed.Value;
-            trkBarSpeed6.Value = trkBarSpeed.Value;
-            nbrUpDownSpeed1.Value = trkBarSpeed.Value;
-            nbrUpDownSpeed2.Value = trkBarSpeed.Value;
-            nbrUpDownSpeed3.Value = trkBarSpeed.Value;
-            nbrUpDownSpeed4.Value = trkBarSpeed.Value;
-            nbrUpDownSpeed5.Value = trkBarSpeed.Value;
-            nbrUpDownSpeed6.Value = trkBarSpeed.Value;
-        }
-
-        private void trkBarSpeed1_Scroll(object sender, EventArgs e)
-        {
-            nbrUpDownSpeed1.Value = trkBarSpeed1.Value;
-        }
-
-        private void trkBarSpeed2_Scroll(object sender, EventArgs e)
-        {
-            nbrUpDownSpeed2.Value = trkBarSpeed2.Value;
-        }
-
-        private void trkBarSpeed3_Scroll(object sender, EventArgs e)
-        {
-            nbrUpDownSpeed3.Value = trkBarSpeed3.Value;
-        }
-
-        private void trkBarSpeed4_Scroll(object sender, EventArgs e)
-        {
-            nbrUpDownSpeed4.Value = trkBarSpeed4.Value;
-        }
-
-        private void trkBarSpeed5_Scroll(object sender, EventArgs e)
-        {
-            nbrUpDownSpeed5.Value = trkBarSpeed5.Value;
-        }
-
-        private void trkBarSpeed6_Scroll(object sender, EventArgs e)
-        {
-            nbrUpDownSpeed6.Value = trkBarSpeed6.Value;
         }
 
         private void btnRefreshNow_Click(object sender, EventArgs e)
         {
-            background_FetchStates.RunWorkerAsync();
+            string ip = txtIp.Text;
+            string user = txtUser.Text;
+            string password = txtPassword.Text;
+
+            string formatSensor = "-I lanplus -H {0} -U {1} -P {2} sensor";
+            string parametersSensor = string.Format(formatSensor, ip, user, password);
+
+            string fullExecuteSensor = ipmitoolPath + " " + parametersSensor;
+            string result = execute(fullExecuteSensor);
+
+            result = result.Replace("\r\n", "\n");
+            string[] sensorList = result.Split('\n', '\r');
+
+            lstViewSensor.Items.Clear();
+            foreach (var item in sensorList) {
+                if (item.Contains("Temp") || item.Contains("RPM") || item.Contains("Voltage") || item.Contains("Current")) {
+                    lstViewSensor.Items.Add(new ListViewItem(item.Split('|')));
+                }
+            }
         }
 
         private void TxtIp_LostFocus(object sender, EventArgs e)
@@ -391,185 +181,11 @@ namespace dell_fans_controller
             saveConfig();
         }
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private void CallAbout_Click(object sender, EventArgs e)
         {
-            this.Text += " " + version;
+            new FormAbout().ShowDialog();
         }
 
-        private void background_FetchStates_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker bgWorker = sender as BackgroundWorker;
-
-            bgWorker.ReportProgress(0, "start");
-
-            string ip = txtIp.Text;
-            string user = txtUser.Text;
-            string password = txtPassword.Text;
-
-            string formatSensor = "-I lanplus -H {0} -U {1} -P {2} sensor";
-            string parametersSensor = string.Format(formatSensor, ip, user, password);
-
-            string fullExecuteSensor = ipmitoolPath + " " + parametersSensor;
-            string result = execute(fullExecuteSensor);
-
-            result = result.Replace("\r\n", "\n");
-            string[] sensorList = result.Split('\n', '\r');
-
-            foreach (var item in sensorList)
-            {
-                if (item.Contains("Temp") || item.Contains("RPM") || item.Contains("Voltage") || item.Contains("Current"))
-                {
-                    string[] temp = new string[8];
-                    var src = item.Split('|');
-                    temp[0] = src[0];
-                    temp[1] = src[1];
-                    temp[2] = src[2];
-                    temp[3] = src[3];
-                    temp[4] = src[5];
-                    temp[5] = src[6];
-                    temp[6] = src[7];
-                    temp[7] = src[8];
-
-                    bgWorker.ReportProgress(1, temp);
-                    //lstViewSensor.Items.Add(new ListViewItem(temp));
-                }
-            }
-            bgWorker.ReportProgress(100, "completed");
-        }
-
-        private void background_FetchStates_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            int Percentage = e.ProgressPercentage;
-            if (Percentage == 0)
-            {
-                this.progressBar.Visible = true;
-                lstViewSensor.Items.Clear();
-            }
-            else if (Percentage == 1)
-            {
-                // 在这里更新UI
-                string[] message = (string[])e.UserState;
-                lstViewSensor.Items.Add(new ListViewItem(message));
-            }
-            else
-            {
-                this.progressBar.Visible = false;
-            }
-        }
-
-        private void about_button_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Version: 1.0.2 (2023)\n\nCode by zzccchen, fork from cw1997 and jiafeng5513\n\nSouce code: https://github.com/zzccchen/dell_fans_controller");
-        }
-
-        private void mode1_Click(object sender, EventArgs e)
-        {
-            trkBarSpeed1.Value = 15;
-            trkBarSpeed2.Value = 15;
-            trkBarSpeed3.Value = 15;
-            trkBarSpeed4.Value = 15;
-            trkBarSpeed5.Value = 15;
-            trkBarSpeed6.Value = 15;
-            nbrUpDownSpeed1.Value = 15;
-            nbrUpDownSpeed2.Value = 15;
-            nbrUpDownSpeed3.Value = 15;
-            nbrUpDownSpeed4.Value = 15;
-            nbrUpDownSpeed5.Value = 15;
-            nbrUpDownSpeed6.Value = 15;
-            btnSet1_Click(this, EventArgs.Empty);
-            btnSet2_Click(this, EventArgs.Empty);
-            btnSet3_Click(this, EventArgs.Empty);
-            btnSet4_Click(this, EventArgs.Empty);
-            btnSet5_Click(this, EventArgs.Empty);
-            btnSet6_Click(this, EventArgs.Empty);
-        }
-
-        private void mode5_Click(object sender, EventArgs e)
-        {
-            trkBarSpeed1.Value = 25;
-            trkBarSpeed2.Value = 40;
-            trkBarSpeed3.Value = 30;
-            trkBarSpeed4.Value = 30;
-            trkBarSpeed5.Value = 40;
-            trkBarSpeed6.Value = 25;
-            nbrUpDownSpeed1.Value = 25;
-            nbrUpDownSpeed2.Value = 40;
-            nbrUpDownSpeed3.Value = 30;
-            nbrUpDownSpeed4.Value = 30;
-            nbrUpDownSpeed5.Value = 40;
-            nbrUpDownSpeed6.Value = 25;
-            btnSet1_Click(this, EventArgs.Empty);
-            btnSet2_Click(this, EventArgs.Empty);
-            btnSet3_Click(this, EventArgs.Empty);
-            btnSet4_Click(this, EventArgs.Empty);
-            btnSet5_Click(this, EventArgs.Empty);
-            btnSet6_Click(this, EventArgs.Empty);
-        }
-
-        private void mode2_Click(object sender, EventArgs e)
-        {
-            trkBarSpeed1.Value = 25;
-            trkBarSpeed2.Value = 40;
-            trkBarSpeed3.Value = 30;
-            trkBarSpeed4.Value = 25;
-            trkBarSpeed5.Value = 20;
-            trkBarSpeed6.Value = 20;
-            nbrUpDownSpeed1.Value = 25;
-            nbrUpDownSpeed2.Value = 40;
-            nbrUpDownSpeed3.Value = 30;
-            nbrUpDownSpeed4.Value = 25;
-            nbrUpDownSpeed5.Value = 20;
-            nbrUpDownSpeed6.Value = 20;
-            btnSet1_Click(this, EventArgs.Empty);
-            btnSet2_Click(this, EventArgs.Empty);
-            btnSet3_Click(this, EventArgs.Empty);
-            btnSet4_Click(this, EventArgs.Empty);
-            btnSet5_Click(this, EventArgs.Empty);
-            btnSet6_Click(this, EventArgs.Empty);
-        }
-
-        private void mode3_Click(object sender, EventArgs e)
-        {
-            trkBarSpeed1.Value = 20;
-            trkBarSpeed2.Value = 20;
-            trkBarSpeed3.Value = 25;
-            trkBarSpeed4.Value = 30;
-            trkBarSpeed5.Value = 40;
-            trkBarSpeed6.Value = 25;
-            nbrUpDownSpeed1.Value = 20;
-            nbrUpDownSpeed2.Value = 20;
-            nbrUpDownSpeed3.Value = 25;
-            nbrUpDownSpeed4.Value = 30;
-            nbrUpDownSpeed5.Value = 40;
-            nbrUpDownSpeed6.Value = 25;
-            btnSet1_Click(this, EventArgs.Empty);
-            btnSet2_Click(this, EventArgs.Empty);
-            btnSet3_Click(this, EventArgs.Empty);
-            btnSet4_Click(this, EventArgs.Empty);
-            btnSet5_Click(this, EventArgs.Empty);
-            btnSet6_Click(this, EventArgs.Empty);
-        }
-
-        private void mode4_Click(object sender, EventArgs e)
-        {
-            trkBarSpeed1.Value = 15;
-            trkBarSpeed2.Value = 23;
-            trkBarSpeed3.Value = 20;
-            trkBarSpeed4.Value = 20;
-            trkBarSpeed5.Value = 23;
-            trkBarSpeed6.Value = 15;
-            nbrUpDownSpeed1.Value = 15;
-            nbrUpDownSpeed2.Value = 23;
-            nbrUpDownSpeed3.Value = 20;
-            nbrUpDownSpeed4.Value = 20;
-            nbrUpDownSpeed5.Value = 23;
-            nbrUpDownSpeed6.Value = 15;
-            btnSet1_Click(this, EventArgs.Empty);
-            btnSet2_Click(this, EventArgs.Empty);
-            btnSet3_Click(this, EventArgs.Empty);
-            btnSet4_Click(this, EventArgs.Empty);
-            btnSet5_Click(this, EventArgs.Empty);
-            btnSet6_Click(this, EventArgs.Empty);
-        }
+        private void frmMain_Load(object sender, EventArgs e) { }
     }
 }
