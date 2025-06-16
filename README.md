@@ -1,8 +1,16 @@
-# dell_fans_controller | 戴尔服务器风扇转速控制工具
+# DellPowerEdgeFansTuner
+A tool for tuning Dell PowerEdge server fan speed by sending control instructions with ipmitool over LAN. With GUI built with C# WinForm.
 
-This is a tool for adjusting the fan speed of Dell servers. It operates by using the `ipmitool` command-line utility for Windows to adjust fan speeds. `ipmitool` controls the server through the IPMI features, which requires the IPMI over LAN feature to be enabled on the server. For detailed operation methods, please refer to this article: [Introduction to server BMC, IPMI and Dell server fan speed reduction method - Zhihu](https://zhuanlan.zhihu.com/p/157796567).
+It operates by using the `ipmitool` command-line utility for Windows to adjust fan speeds.
+`ipmitool` controls the server through the IPMI features,
+which requires the IPMI over LAN feature to be enabled on the server.
+For detailed operation methods, please refer to this article:
+[Introduction to server BMC, IPMI and Dell server fan speed reduction method - Zhihu](https://zhuanlan.zhihu.com/p/157796567).
 
-该工具用于调整戴尔服务器的风扇转速。它通过 Windows 的命令行工具 `ipmitool` 来调整风扇转速。`ipmitool` 通过服务器的 IPMI 功能进行控制，使用该工具前需确保服务器已启用 IPMI over LAN 功能。具体操作方法请参考此文章：[服务器的BMC，IPMI介绍以及Dell服务器风扇降速方法 - 知乎](https://zhuanlan.zhihu.com/p/157796567)。
+该工具用于调整戴尔服务器的风扇转速。
+它通过 Windows 的命令行工具 `ipmitool` 来调整风扇转速。`ipmitool` 通过服务器的 IPMI 功能进行控制，
+使用该工具前需确保服务器已启用 IPMI over LAN 功能。
+具体操作方法请参考此文章：[服务器的BMC，IPMI介绍以及Dell服务器风扇降速方法 - 知乎](https://zhuanlan.zhihu.com/p/157796567)。
 
 ## Latest Release Download Links | 最新版下载地址
 
@@ -27,6 +35,7 @@ To build the source code for this project, the following environment is required
 
 ## Contributing | 贡献
 
-Contributions to this project are welcome! If you have any suggestions or improvements, please submit an Issue or Pull Request.
+Contributions to this project are welcome!
+If you have any suggestions or improvements, please submit an Issue or Pull Request.
 
 欢迎对本项目进行贡献！如果您有任何建议或改进，请提交 Issue 或 Pull Request。
